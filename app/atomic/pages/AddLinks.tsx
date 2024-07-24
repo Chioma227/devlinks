@@ -82,7 +82,7 @@ const AddLinks = () => {
     return (
         <>
             <header className='mb-[40px]'>
-                <h3 className='text-[32px] text-dark_grey font-bold mb-[8px] m-0'>Customize your links</h3>
+                <h3 className='sm:text-[32px] text-[24px] text-dark_grey font-bold mb-[8px] m-0'>Customize your links</h3>
                 <p className='text-grey text-[15px]'>Add/edit/remove links below and then share all your profiles with the world</p>
             </header>
             {message && <span>{message}</span>}

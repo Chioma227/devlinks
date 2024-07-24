@@ -1,13 +1,42 @@
 "use client"
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLinkStore } from "@/zustand/useLinkStore"
 import DynamicIcon from "@/app/atomic/atoms/Icon";
+import { auth, db } from "@/firebase/firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 
 const Placeholder = () => {
 
     const { fetchLinks, links } = useLinkStore()
+    const [userData, setUserData] = useState<any>();
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const userId = user.uid;
+                const getUserData = async () => {
+                    const docRef = doc(db, "users", userId);
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        setUserData(docSnap.data());
+                    } else {
+                        console.log("No such document!");
+                        setUserData('');
+                    }
+                };
+                getUserData();
+            } else {
+                // Handle user not logged in
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
 
     // useEffect(() => {
     //     fetchLinks();
@@ -18,8 +47,10 @@ const Placeholder = () => {
                 <div className='h-[96px] w-[96px] rounded-full bg-grey50 mb-[25px]'>
 
                 </div>
-                <div className='w-[160px] h-[16px] mb-[12px] bg-grey50 rounded-full'></div>
-                <div className='w-[72px] h-[8px] bg-grey50 rounded-full'></div>
+                {userData?.fName && userData?.lName ? <div className='w-[160px] h-[16px] mb-[12px] bg-grey50 rounded-full'>{`${userData?.fName} ${userData?.lName}`}</div>
+                    : <div className='w-[160px] h-[16px] mb-[12px] bg-grey50 rounded-full'></div>}
+                {userData?.email ? <div className='w-[72px] h-[8px] bg-grey50 rounded-full'>{userData?.email}</div>
+                    : <div className='w-[72px] h-[8px] bg-grey50 rounded-full'></div>}
             </header>
             <section className='space-y-[20px]'>
                 {links[0] ? <div style={{ backgroundColor: `${links[0].platformColor} ` }} className={`w-[237px] h-[44px] rounded-[12px] text-white p-[9px]`}>

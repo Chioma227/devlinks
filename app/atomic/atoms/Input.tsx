@@ -38,8 +38,8 @@ const InputField = ({
     switch (variant) {
         case DEFAULT:
             style = clsx(className,
-                " border-1 w-full rounded-[8px] indent-[10px] py-[5px] transition-all",
-                "my-input outline-none focus:shadow-focus-shadow border"
+                " border-1 w-full bg-transparent pl-[35px] rounded-[8px] py-[9px] transition-all",
+                "outline-none focus:shadow-focus-shadow border"
             )
             break;
         default:
@@ -54,7 +54,7 @@ const InputField = ({
                 defaultValue={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className={clsx(style, className, "py-[9px]")}
+                className={clsx(className, style,)}
             />
             {isError && <small className=' px-[9px] absolute z-30 right-[9px] top-[9px] text-red'>{errorMsg}</small>}
         </div>

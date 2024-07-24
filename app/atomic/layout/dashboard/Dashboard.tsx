@@ -61,9 +61,9 @@ const Dashboard = () => {
     }, [fileName]);
 
     return (
-        <main className="p-[24px] ">
+        <main className="md:p-[24px] p-0 ">
             <Header />
-            <section className="flex gap-[24px] mt-[24px]">
+            <section className=" md:px-0 px-[20px] flex gap-[24px] mt-[24px]">
                 <Leftpanel />
                 <RightPanel />
             </section>

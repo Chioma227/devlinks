@@ -40,7 +40,7 @@ const IconInput = ({ input, icon, name, label, className }: IIProps) => {
                 />
                 <InputField
                     {...input}
-                    className="indent-[38px]"
+                    // className="px-[60px] "
                 />
             </div>
         </section>

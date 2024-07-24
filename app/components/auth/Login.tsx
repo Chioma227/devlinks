@@ -33,12 +33,12 @@ const Login = () => {
     };
 
     return (
-        <main className="flex items-center flex-col justify-center h-[100%]" >
+        <main className="flex items-center flex-col justify-center h-[100dvh]" >
             <Logo />
-            <section className="sm:w-[476px]  w-[100%] mt-[30px] rounded-[12px] p-[40px] bg-white mx-auto h-fit">
-                <header className="mb-[40px]">
-                    <h3 className="text-[32px] font-bold text-dark_grey mb-[8px]">Login</h3>
-                    <p className="text-[16px] text-grey">Add your details below to get back into the app</p>
+            <section className="sm:w-[476px] w-[100%] mt-[30px] rounded-[12px] sm:p-[40px] p-[10px] sm:bg-white bg-transparent mx-auto h-fit">
+                <header className="sm:mb-[40px] mb-[20px]">
+                    <h3 className="sm:text-[32px] text-[25px] font-bold text-dark_grey sm:mb-[8px] mb-[5px]">Login</h3>
+                    <p className="sm:text-[16px] text-[14px] text-grey">Add your details below to get back into the app</p>
                 </header>
                 <form onSubmit={handleSubmit} className="space-y-[24px]">
                     <IconInput
@@ -51,7 +51,7 @@ const Login = () => {
                             isError: isError,
                             type: "text",
                             name: "email",
-                            className: "",
+                            className: "px-[30px]",
                             onChange: handleChange,
                             value: formValues.email,
                             variant: inputVariant.DEFAULT,
