@@ -5,8 +5,11 @@ import ButtonComponent from "../atoms/Button"
 import useToggleStore from "@/zustand/useToggle"
 import { buttonVariants } from "@/app/variants/variants"
 import DynamicIcon from "../atoms/Icon"
+import Link from "next/link"
+import { useLinkStore } from "@/zustand/useLinkStore"
 
 const Header = () => {
+    const { links } = useLinkStore()
 
     const { toggleLinkPage, isLinkPage } = useToggleStore();
 
@@ -43,13 +46,15 @@ const Header = () => {
                 />
             </div>
             <div className="sm:hidden flex gap-3 items-center">
-                <DynamicIcon src="link" alt="link" className="w-[20px]"/>
-                <DynamicIcon src="user" alt="user" className="w-[20px]"/>
+                <DynamicIcon src="link" alt="link" className="w-[20px]" />
+                <DynamicIcon src="user" alt="user" className="w-[20px]" />
             </div>
-            <ButtonComponent variant={buttonVariants.OUTLINE_FIT} className="md:block hidden">
-                Preview
+            <ButtonComponent isDisabled={!links} variant={buttonVariants.OUTLINE_FIT} className="md:block hidden">
+                <Link href="/preview"> Preview</Link>
             </ButtonComponent>
-            <DynamicIcon src="publish" alt="publish" className="w-[45px] md:hidden block"/>
+            <Link href='/preview' className="md:hidden block">
+                <DynamicIcon src="publish" alt="publish" className="w-[45px]" />
+            </Link>
         </header>
     )
 }

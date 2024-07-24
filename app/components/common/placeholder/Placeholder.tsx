@@ -6,13 +6,13 @@ import DynamicIcon from "@/app/atomic/atoms/Icon";
 import { auth, db } from "@/firebase/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import { FaArrowRight } from "react-icons/fa6";
 
 
 const Placeholder = () => {
 
     const { fetchLinks, links } = useLinkStore()
     const [userData, setUserData] = useState<any>();
-
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -29,18 +29,11 @@ const Placeholder = () => {
                     }
                 };
                 getUserData();
-            } else {
-                // Handle user not logged in
             }
         });
-
         return () => unsubscribe();
     }, []);
 
-
-    // useEffect(() => {
-    //     fetchLinks();
-    // }, [fetchLinks]);
     return (
         <div className='absolute top-[63px] left-[29px]'>
             <header className='mb-[46px] flex items-center justify-center flex-col'>
@@ -60,12 +53,12 @@ const Placeholder = () => {
                 </div>
                     :
                     <div className='w-[237px] h-[44px] rounded-[12px] bg-grey50'></div>}
-                {links[1] ? <div style={{ backgroundColor: `${links[1].platformColor} ` }} className={`w-[237px] h-[44px] rounded-[12px] bg-black text-white p-[9px]`}>
+                {links[1] ? <div style={{ backgroundColor: `${links[1].platformColor} `}} className={`w-[237px] h-[44px] rounded-[12px]  text-white p-[9px]`}>
                     <Link href={links[1].newLink} className="text-[13px] mt-[5px] flex items-center gap-[10px]">
                         <DynamicIcon src={links[1].icon} alt={links[1].platform} className="text-white" /><span>{links[1].platform}</span>
                     </Link>
                 </div> : <div className='w-[237px] h-[44px] rounded-[12px] bg-grey50'></div>}
-                {links[2] ? <div style={{ backgroundColor: `${links[2].platformColor} ` }} className={`w-[237px] h-[44px] rounded-[12px] bg-black text-white p-[9px]`}>
+                {links[2] ? <div style={{ backgroundColor: `${links[2].platformColor} ` }} className={`w-[237px] h-[44px] rounded-[12px] text-white p-[9px]`}>
                     <Link href={links[2].newLink} className="text-[13px] mt-[5px] flex items-center gap-[10px]">
                         <DynamicIcon src={links[2].icon} alt={links[2].platform} className="text-white" /><span>{links[2].platform}</span>
                     </Link>

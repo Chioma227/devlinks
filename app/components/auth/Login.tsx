@@ -28,7 +28,7 @@ const Login = () => {
     const handleSubmit = async (e: React.FormEvent) => {
 
         e.preventDefault();
-
+        router.push('/overview')
         await loginUser(formValues.email, formValues.password);
     };
 

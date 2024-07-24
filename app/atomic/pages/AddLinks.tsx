@@ -45,28 +45,25 @@ const AddLinks = () => {
     const handleDelete = async (id: string) => {
         try {
             const idString = id.toString();
-          const inputElement = document.getElementById(idString);
-          if (inputElement) {
-            inputElement.remove();
-          }
-      
-          // Delete Firestore document
-          const docRef = doc(db, 'links', id);
-          await deleteDoc(docRef);
-      
-          // Delete localStorage item
-          localStorage.removeItem(id);
-      
-          // Handle success, e.g., show a success message
-          console.log('Item deleted successfully');
+            const inputElement = document.getElementById(idString);
+            if (inputElement) {
+                inputElement.remove();
+            }
+
+            // Delete Firestore document
+            const docRef = doc(db, 'links', id);
+            await deleteDoc(docRef);
+
+            // Delete localStorage item
+            localStorage.removeItem(id);
+
+            // Handle success, e.g., show a success message
+            console.log('Item deleted successfully');
         } catch (error) {
-          // Handle error, e.g., show an error message
-          console.error('Error deleting item:', error);
+            // Handle error, e.g., show an error message
+            console.error('Error deleting item:', error);
         }
-      };
-
-
-
+    };
 
     const handleAddLink = async () => {
         if (newLink.trim() === '' || platform.trim() === '') return;
@@ -85,7 +82,7 @@ const AddLinks = () => {
                 <h3 className='sm:text-[32px] text-[24px] text-dark_grey font-bold mb-[8px] m-0'>Customize your links</h3>
                 <p className='text-grey text-[15px]'>Add/edit/remove links below and then share all your profiles with the world</p>
             </header>
-            {message && <span>{message}</span>}
+            {/* {message && <span>{message}</span>} */}
             <section>
                 <ButtonComponent onClick={handleAddInput} variant={buttonVariants.OUTLINE_FULL} className="mb-[24px]">
                     + Add newLink
@@ -101,8 +98,7 @@ const AddLinks = () => {
                                 handleSelect={handleSelectChange}
                                 onChange={(e) => setNewLink(e.target.value)}
                                 key={index}
-                                // readOnly={true}
-                                handleRemove={() => handleDelete(index.toString())}
+                                handleRemove={() => handleRemoveInput(index)}
                                 value={link.url}
                             />
                         })

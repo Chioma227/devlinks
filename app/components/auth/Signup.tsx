@@ -38,7 +38,7 @@ const SignIn = () => {
 
         //create user
         await createUser(email, password, confirmPassword);
-        // router.push('/overview')
+        router.push('/overview')
 
     };
 
