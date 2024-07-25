@@ -73,10 +73,14 @@ const Placeholder = () => {
                     <div>
                         {links.map((link: { platformColor: any; newLink: string | UrlObject; icon: string; platform: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<AwaitedReactNode> | null | undefined; }, i: Key | null | undefined) => {
                             return (
-                                <div key={i} style={{ backgroundColor: `${link.platformColor} ` }} className={`w-[237px] mb-[20px] h-[44px] rounded-[12px] text-white p-[9px]`}>
-                                    <Link href={link.newLink} className="text-[13px] mt-[5px] flex items-center gap-[10px]">
-                                        <DynamicIcon src={link.icon} alt={link.icon} className="text-white" /><span>{link.platform}</span>
-                                    </Link>
+                                <div key={i} style={{ backgroundColor: `${link.platformColor} ` }} className={`w-[237px] mb-[20px] h-[44px] flex items-center justify-between rounded-[12px] text-white p-[9px]`}>
+                                     <div className="gap-[8px] flex items-center">
+                                        <DynamicIcon src={link.icon} alt={link.icon} />
+                                        <Link href={link.newLink} className="">
+                                            {link.platform}
+                                        </Link>
+                                    </div>
+                                    <FaArrowRight className="text-white" />
                                 </div>
                             )
                         })}

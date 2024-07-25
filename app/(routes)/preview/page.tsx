@@ -13,12 +13,17 @@ import { FaArrowRight } from "react-icons/fa6";
 import { UrlObject } from "url";
 
 const Preview = () => {
-    // const { links } = useLinkStore()
-    const [userData, setUserData] = useState<any>();
+    //states
+    const [user, setUser] = useState<any>([]);
     const [links, setLinks] = useState<any>([]);
-
+    const [userData, setUserData] = useState<any>();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+    //destructure user array
+    const [userDetail, setUserDetail] = user
+
+
+    //check for user authentication
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
             if (user) {
@@ -31,6 +36,8 @@ const Preview = () => {
         return () => unsubscribe();
     }, []);
 
+
+    //get links
     useEffect(() => {
         const unsubscribe = onSnapshot(collection(db, 'links'), (querySnapshot) => {
             const retrievedLinks = querySnapshot.docs.map((doc) => ({
@@ -42,29 +49,18 @@ const Preview = () => {
         return unsubscribe;
     }, []);
 
+    //get user data
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const userId = user.uid;
-                console.log(userId);
-                
-                const getUserData = async () => {
-                    const docRef = doc(db, "users", userId);
-                    const docSnap = await getDoc(docRef);
-
-                    console.log(docSnap);
-                    if (docSnap.exists()) {
-                        setUserData(docSnap.data());
-                    } else {
-                        console.log("No such document!");
-                        setUserData('');
-                    }
-                };
-                getUserData();
-            }
+        const unsubscribe = onSnapshot(collection(db, 'users'), (querySnapshot) => {
+            const retrievedData = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setUser(retrievedData);
         });
-        return () => unsubscribe();
+        return unsubscribe;
     }, []);
+
     return (
         <main>
             <header className="sm:block hidden bg-blue100 p-[10px] w-[100%] h-[357px] rounded-bl-[20px] rounded-br-[20px]">
@@ -84,21 +80,19 @@ const Preview = () => {
             </div>
             <section className=" sm:flex items-center justify-center sm:mt-[-15%] mt-0 sm:p-0 p-[15px]">
                 <main className="sm:w-[394px] sm:shadow-bg-shadow shadow-none sm:bg-white bg-transparent h-[569px] md:p-[56px] sm:p-[30px] p-[15px] rounded-[24px]">
-                    {/* <div>
-                        <Image src={userData?.imageUrl} alt="user" width={30} height={30} />
-                    </div> */}
                     <section className="flex items-center mb-[30px] justify-center flex-col space-y-[7px]">
-                        <div className="bg-grey50 h-[120px] w-[120px] rounded-full">
+                        {userDetail?.imageUrl ?
+                            <div className="h-[120px] w-[120px] rounded-full border-[4px] border-blue100">
+                                <img src={userDetail?.imageUrl} alt="user" className="h-full rounded-full w-full object-cover" />
+                            </div> : <div className="bg-grey50 h-[120px] w-[120px] rounded-full">
 
-                        </div>
-                        <div className='w-[160px] h-[16px] mb-[12px] bg-grey50 rounded-full'></div>
-                        <div className='w-[72px] h-[8px] bg-grey50 rounded-full'></div>
+                            </div>}
+
+                        {userDetail?.fName ? <p className="text-[32px] text-dark_grey font-bold">{userDetail?.fName} {userDetail?.lName}</p> : <div className='w-[160px] h-[16px] mb-[12px] bg-grey50 rounded-full'></div>}
+                        {userDetail?.email ? <p className="text-border">{userDetail?.email}</p> : <div className='w-[72px] h-[8px] bg-grey50 rounded-full'></div>}
                     </section>
-                    <div>
-                        <p>{userData?.fName} {userData?.lName}</p>
-                        <p>{userData?.email}</p>
-                    </div>
-                    <div className="block space-y-[20px]">
+
+                    <div className="block space-y-[20px] mt-[20px]">
                         {links.map((link: { platformColor: any; icon: string; platform: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<AwaitedReactNode> | null | undefined; newLink: string | UrlObject; }, i: Key | null | undefined) => {
                             return (
                                 <div key={i} style={{ background: link.platformColor }} className="text-white flex items-center justify-between h-[56px] rounded-[12px] p-[16px]">
