@@ -8,6 +8,7 @@ interface inputProps {
     type: string,
     isError?: boolean,
     errorMsg?: string,
+    isDisabled?:boolean,
     value: string,
     className: string,
     placeholder: string,

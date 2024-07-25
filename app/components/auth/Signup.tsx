@@ -10,7 +10,6 @@ import { inputVariant, buttonVariants } from "@/app/variants/variants"
 
 
 const SignIn = () => {
-
     //states
     const [formValues, setFormValues] = useState({
         email: '',
@@ -36,7 +35,6 @@ const SignIn = () => {
         e.preventDefault();
         const { email, password, confirmPassword } = formValues;
 
-        //create user
         await createUser(email, password, confirmPassword);
         router.push('/overview')
 
@@ -106,7 +104,6 @@ const SignIn = () => {
                             }}
                             label="Confirm password"
                         />
-                        {error}
                         <ButtonComponent type="submit" variant={buttonVariants.FILLED_FULL}>
                             {loading ? 'Creating account...' : 'Create new account'}
                         </ButtonComponent>

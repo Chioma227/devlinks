@@ -10,41 +10,55 @@ import { db } from "@/firebase/firebaseConfig";
 import { persist } from "zustand/middleware";
 
 interface Link {
-  id: string;
+  id?: string;
   icon: string;
-  platformColor: string;
   newLink: string;
   platform: string;
+  platformColor: string;
 }
 
 interface inputs {
+  id:string,
+  newLink: string;
   platform: string;
-  url: string;
+  isDisabled?: boolean;
 }
 
 interface LinkState {
   links: Link[];
   message: string;
   linkInputs: inputs[];
+  addLinkInput: () => void;
   isLoading: boolean;
+  isRemoving: boolean;
   fetchLinks: () => Promise<void>;
-  removeLink: (id: string) => Promise<void>;
-  addLink: (
-    newLink: string,
-    platform: string,
-    platformColor: string,
-    icon: string,
-  ) => Promise<void>;
+  handleSubmit: (index: number, data:Link) => Promise<void>;
+  handleRemove: (linkInputs:inputs[], index: number) => void;
+  handleInputChange: (index: number, field: string, value: string) => void;
 }
 
 export const useLinkStore = create<LinkState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       message: "",
       links: [],
       isLoading: false,
-      linkInputs: [{ platform: "", url: "" }],
+      isRemoving: false,
+      linkInputs: [{ platform: '', newLink: '', isDisabled: false, id: '',}],
 
+      //add new link input
+      addLinkInput: () => set((state) => ({ linkInputs: [...state.linkInputs, { platform: '', newLink: '', isDisabled: false, id: '', }] })),
+
+
+      //input change
+      handleInputChange: (index: number, field: string, value: string) => set((state) => {
+        const newLinkInputs:any = [...state.linkInputs];
+          newLinkInputs[index][field] = value;
+        return { linkInputs: newLinkInputs };
+      }),
+
+
+      //fetch links
       fetchLinks: async () => {
         const linksCollection = collection(db, "links");
         const linksSnapshot = await getDocs(linksCollection);
@@ -55,35 +69,47 @@ export const useLinkStore = create<LinkState>()(
         set({ links: linksList });
       },
 
-      addLink: async (newLink, platform, platformColor, icon) => {
-        set({ isLoading: true });
-        try {
-          const linkRef = await addDoc(collection(db, "links"), {
-            newLink,
-            platform,
-            platformColor,
-          });
-          console.log(newLink);
-          set((state) => ({
-            links: [
-              ...state.links,
-              { id: linkRef.id, newLink, platform, platformColor, icon },
-            ],
-          }));
-          set({ isLoading: false, message: "Successfully added new link" });
-          console.log(`Document added with ID: ${linkRef.id}`);
-        } catch (error) {
-          set({ isLoading: false, message: "Unable to add link" });
-          console.error("Error adding document: ", error);
-        }
+
+      //add link
+      handleSubmit: async (index, data) => {
+          try {
+            set({isLoading: true})
+            const state = get();
+            const docRef = await addDoc(collection(db, 'links'), data);
+
+            const newLinkInputs = [...state.linkInputs];
+            newLinkInputs[index] = { ...data, id: docRef.id };
+            newLinkInputs[index].isDisabled = true;
+            set({ linkInputs: newLinkInputs, isLoading:false });
+
+            const querySnapshot = await getDocs(collection(db, 'links'));
+            const retrievedLinks = querySnapshot.docs.map((doc) => ({
+              id: doc.id,
+              icon:data.icon,
+              newLink: data.newLink,
+              platform: data.platform,
+              platformColor: data.platformColor
+            }));
+            set({ links: retrievedLinks });
+          } catch (error) {
+            console.error('Error adding link:', error);
+          }
       },
 
-      removeLink: async (id: string) => {
-        await deleteDoc(doc(db, "links", id));
+
+      //remove input and corresponding link item
+      handleRemove: async (linkInputs: inputs[], index: number) => {
+        set({isRemoving:true})
+        const linkToRemove = linkInputs[index];
+       
+        await deleteDoc( doc(db, 'links', linkToRemove.id))
+    
         set((state) => ({
-          links: state.links.filter((link) => link.id !== id),
+          linkInputs: state.linkInputs.filter((_, i) => i !== index)
         }));
+        set({isRemoving:false})
       },
+      
     }),
     {
       name: "link-store",

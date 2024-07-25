@@ -30,30 +30,30 @@ const ButtonComponent = ({
     let style;
 
     if (isDisabled) {
-        style = clsx(style, "bg-mutedBlue cursor-not-allowed")
+        style = clsx(style, "opacity-50 hover:bg-transparent cursor-not-allowed")
     }
 
     switch (variant) {
         case FILLED_FIT:
-            style = clsx(className, "px-[27px] py-[11px] bg-blue100 rounded-[8px] text-white hover:bg-activeBlue transition-all")
+            style = clsx(style, "sm:px-[27px] px-[15px] sm:py-[11px] py-[8px] bg-blue100 rounded-[8px] text-white hover:bg-activeBlue transition-all")
             break;
         case OUTLINE_FIT:
-            style = clsx(className, "px-[27px] py-[11px] border-[1.5px] rounded-[8px]",
+            style = clsx(style, "sm:px-[27px] px-[15px] sm:py-[11px] py-[8px] rounded-[8px]",
                 "bg-transparent font-medium border-blue100 text-blue100 transition-all duration-3 hover:bg-lightPurple"
             )
             break;
         case FILLED_FULL:
-            style = clsx(className, "px-[27px] w-[100%] py-[11px] border-[1.5px] rounded-[8px]",
+            style = clsx(style, "px-[27px] w-[100%] py-[11px] border-[1.5px] rounded-[8px]",
                 "bg-blue100 hover:bg-activeBlue transition-all font-medium text-white"
             )
             break;
         case OUTLINE_FULL:
-            style = clsx(className, "px-[27px] w-[100%] py-[11px] border-[1.5px] rounded-[8px] transition-all duration-3 hover:bg-lightPurple",
+            style = clsx(style, "px-[27px] w-[100%] py-[11px] border-[1.5px] rounded-[8px] transition-all duration-3 hover:bg-lightPurple",
                 "bg-transparent font-medium border-blue100 font-medium text-blue100 text-blue100"
             )
             break;
         case TRANSPARENT:
-            style = clsx(className)
+            style = clsx(style)
             break;
 
         default:

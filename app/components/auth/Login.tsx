@@ -9,13 +9,13 @@ import IconInput from "@/app/atomic/molecules/IconInput"
 import { inputVariant, buttonVariants } from "@/app/variants/variants"
 
 const Login = () => {
+    const router = useRouter()
+    const { toggleForm } = useToggleStore()
     const [formValues, setFormValues] = useState({
         email: '',
         password: ''
     })
     const { loginUser, error, isError, loading } = useAuthStore();
-    const { toggleForm } = useToggleStore()
-    const router = useRouter()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -78,7 +78,6 @@ const Login = () => {
                         }}
                         label="Password"
                     />
-                    {/* {error} */}
                     <ButtonComponent type="submit" variant={buttonVariants.FILLED_FULL}>
                         {loading ? 'Logging in...' : 'Login'}
                     </ButtonComponent>

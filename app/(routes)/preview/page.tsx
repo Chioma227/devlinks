@@ -1,25 +1,103 @@
 "use client"
+import ButtonComponent from "@/app/atomic/atoms/Button";
 import DynamicIcon from "@/app/atomic/atoms/Icon"
+import { buttonVariants } from "@/app/variants/variants";
+import { auth, db } from "@/firebase/firebaseConfig";
 import { useLinkStore } from "@/zustand/useLinkStore"
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
+import Image from "next/image";
 import Link from "next/link"
+import { AwaitedReactNode, JSXElementConstructor, Key, ReactElement, ReactNode, useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
+import { UrlObject } from "url";
 
 const Preview = () => {
-    const { links } = useLinkStore()
+    // const { links } = useLinkStore()
+    const [userData, setUserData] = useState<any>();
+    const [links, setLinks] = useState<any>([]);
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
+            if (user) {
+                setIsLoggedIn(true);
+            } else {
+                setIsLoggedIn(false);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    useEffect(() => {
+        const unsubscribe = onSnapshot(collection(db, 'links'), (querySnapshot) => {
+            const retrievedLinks = querySnapshot.docs.map((doc) => ({
+                id: Number(doc.id),
+                ...doc.data(),
+            }));
+            setLinks(retrievedLinks);
+        });
+        return unsubscribe;
+    }, []);
+
+    useEffect(() => {
+        console.log(userData);
+
+
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const userId = user.uid;
+                const getUserData = async () => {
+                    const docRef = doc(db, "users", userId);
+                    const docSnap = await getDoc(docRef);
+
+                    console.log(docSnap);
+                    if (docSnap.exists()) {
+                        setUserData(docSnap.data());
+                    } else {
+                        console.log("No such document!");
+                        setUserData('');
+                    }
+                };
+                getUserData();
+            }
+        });
+        return () => unsubscribe();
+    }, []);
     return (
         <main>
-            <header className="bg-blue100 w-[100%] h-[357px] rounded-bl-[20px] rounded-br-[20px]">
-
+            <header className="sm:block hidden bg-blue100 p-[10px] w-[100%] h-[357px] rounded-bl-[20px] rounded-br-[20px]">
+                <div className="w-full bg-white p-[10px] rounded-[9px] flex items-center justify-between">
+                    {isLoggedIn && <Link href="/overview">
+                        <ButtonComponent variant={buttonVariants.OUTLINE_FIT}>Back to editor</ButtonComponent>
+                    </Link>}
+                    <ButtonComponent variant={buttonVariants.FILLED_FIT}>Share Link</ButtonComponent>
+                </div>
             </header>
-            <section className=" flex items-center justify-center mt-[-15%]">
-                <main className="w-[394px] shadow-bg-shadow bg-white h-[569px] p-[56px] rounded-[24px]">
-                    <div>somethinghere</div>
+            <div className="w-full sm:hidden bg-white p-[10px] rounded-[9px] flex items-center justify-between">
+                {isLoggedIn && <Link href="/overview">
+                    <ButtonComponent variant={buttonVariants.OUTLINE_FIT}>Back to editor</ButtonComponent>
+                </Link>}
+
+                <ButtonComponent variant={buttonVariants.FILLED_FIT}>Share Link</ButtonComponent>
+            </div>
+            <section className=" sm:flex items-center justify-center sm:mt-[-15%] mt-0 sm:p-0 p-[15px]">
+                <main className="sm:w-[394px] sm:shadow-bg-shadow shadow-none sm:bg-white bg-transparent h-[569px] p-[56px] rounded-[24px]">
+                    <div>
+                        <Image src={userData?.imageUrl} alt="user" width={30} height={30} />
+                    </div>
+                    <div>
+                        <p>{userData?.firstName} {userData?.lastName}</p>
+                        <p>{userData?.email}</p>
+                    </div>
                     <div className="block space-y-[20px]">
-                        {links.map((link, i) => {
+                        {links.map((link: { platformColor: any; icon: string; platform: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<AwaitedReactNode> | null | undefined; newLink: string | UrlObject; }, i: Key | null | undefined) => {
                             return (
                                 <div key={i} style={{ background: link.platformColor }} className="text-white flex items-center justify-between h-[56px] rounded-[12px] p-[16px]">
                                     <div className="gap-[8px] flex items-center">
-                                        <DynamicIcon src={link.icon} alt={link.platform} />
+                                        <DynamicIcon src={link.icon} alt={link.icon} />
                                         <Link href={link.newLink} className="">
                                             {link.platform}
                                         </Link>

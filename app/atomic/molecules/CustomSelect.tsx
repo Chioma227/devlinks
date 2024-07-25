@@ -1,4 +1,5 @@
 "use client"
+import clsx from 'clsx';
 import DynamicIcon from '../atoms/Icon';
 import { useState, useRef, useEffect } from 'react';
 
@@ -11,10 +12,12 @@ interface Option {
 
 interface CustomSelectProps {
     options: Option[];
+    isSelectDisabled?:boolean;
     onSelect: (value: string, icon: string, color: string) => void;
 }
 
-const CustomSelect: React.FC<CustomSelectProps> = ({ options, onSelect }) => {
+const CustomSelect: React.FC<CustomSelectProps> = ({ options, onSelect, isSelectDisabled }) => {
+    let style;
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState<Option | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -41,9 +44,13 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ options, onSelect }) => {
         };
     }, []);
 
+    if(isSelectDisabled){
+        style = clsx(style, "opacity-50 text-muted cursor-not-allowed")
+    }
+
     return (
         <div ref={dropdownRef}>
-            <button className="bg-white border border-border w-[100%] text-left py-[7px] px-[10px] rounded-[8px]" onClick={handleToggleDropdown}>
+            <button disabled={isSelectDisabled}  className="bg-white border border-border w-[100%] text-left py-[7px] px-[10px] rounded-[8px]" onClick={handleToggleDropdown}>
                 {selectedOption ? (
                     <div className='flex gap-[12px]'>
                         <DynamicIcon src={selectedOption.icon} alt="" className="option-icon" />

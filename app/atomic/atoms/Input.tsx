@@ -3,13 +3,13 @@ import { inputVariant } from '@/app/variants/variants';
 
 interface inputProps {
     name: string,
+    type?: string,
+    value?: string,
     isError?: boolean,
     errorMsg?: string,
-    type?: string,
-    readonly?: boolean,
-    value?: string,
     className?: string,
     placeholder: string,
+    isDisabled?: boolean,
     variant?: inputVariant,
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void,
 }
@@ -21,11 +21,11 @@ const InputField = ({
     name,
     value,
     variant,
+    isError,
     onChange,
     errorMsg,
-    isError,
     className,
-    readonly,
+    isDisabled,
     placeholder,
 }: inputProps) => {
 
@@ -33,6 +33,9 @@ const InputField = ({
 
     if (isError) {
         className = clsx(style, "border-1 border-red")
+    }
+    if (isDisabled) {
+        className = clsx(style, "opacity-50 cursor--not-allowed")
     }
 
     switch (variant) {
@@ -50,7 +53,7 @@ const InputField = ({
             <input
                 name={name}
                 type={type}
-                readOnly={readonly}
+                disabled={isDisabled}
                 defaultValue={value}
                 onChange={onChange}
                 placeholder={placeholder}

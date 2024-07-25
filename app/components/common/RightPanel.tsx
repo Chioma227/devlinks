@@ -8,7 +8,7 @@ const RightPanel = () => {
 
     return (
         <>
-            <section className='lg:w-[808px]  w-[100%] bg-white overflow-y-scroll rounded-[12px] p-[24px]'>
+            <section className='lg:w-[808px]  w-[100%] bg-white overflow-y-scroll rounded-[12px] sm:p-[24px] p-[15px]'>
                 {isLinkPage ? <AddLinks /> : <SetupProfile />}
             </section>
          

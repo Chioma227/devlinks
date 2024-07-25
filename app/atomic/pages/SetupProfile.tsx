@@ -1,13 +1,14 @@
 "use client"
+import { v4 } from "uuid";
 import Image from "next/image";
 import { useState } from "react";
-import { v4 } from "uuid";
 import DynamicIcon from "../atoms/Icon";
 import InputField from "../atoms/Input";
-import { inputVariant } from "@/app/variants/variants";
+import { buttonVariants, inputVariant } from "@/app/variants/variants";
 import { db, storage } from "@/firebase/firebaseConfig";
 import { addDoc, collection } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import ButtonComponent from "../atoms/Button";
 
 
 const SetupProfile = () => {
@@ -41,25 +42,28 @@ const SetupProfile = () => {
     }
   };
 
+
+
   const handleSubmit = async () => {
     if (!selectedFile) {
       console.error('Please select an image');
       return;
     }
-
-    // Generate a unique ID for the user
+    // user unique id
     const userId = v4();
 
-    // Upload image to Firebase Storage
+    // upload image
     const storageRef = ref(storage, `images/${userId}/${selectedFile.name}`);
     const uploadTask = uploadBytesResumable(storageRef, selectedFile);
     await uploadTask;
     const downloadURL = await getDownloadURL(storageRef);
 
-    // Store user data in Firestore
+    // send user data to firestore
     await addDoc(collection(db, 'users'), {
       userId,
-      ...inputValues, // Destructure inputValues for conciseness
+      firstName: inputValues.fName,
+      lastName: inputValues.lName,
+      email: inputValues.email,
       imageUrl: downloadURL,
     });
 
@@ -74,17 +78,16 @@ const SetupProfile = () => {
     setSelectedFile(null);
     setImageUrl('');
 
-
     console.log('Data submitted successfully!');
   };
 
   return (
     <>
       <header className='mb-[40px]'>
-        <h3 className='text-[32px] text-dark_grey font-bold mb-[8px] m-0'>Profile Details</h3>
+        <h3 className='sm:text-[32px] text-[24px] text-dark_grey font-bold mb-[8px] m-0'>Profile Details</h3>
         <p className='text-grey text-[15px]'>Add your details to create a personal touch to your profile</p>
       </header>
-      <section className="bg-white50 p-[20px] rounded-[12px] sm:flex block items-center">
+      <section className="bg-white50 sm:p-[20px] p-[15px] rounded-[12px] sm:flex block items-center">
         <p className="text-grey w-[340px]">Profile picture</p>
         <div className="file-input-container">
           <input id="file-input" type="file" name="" hidden onChange={handleFileChange} className="file-input" />
@@ -143,8 +146,12 @@ const SetupProfile = () => {
               className="md:w-[430px] w-[100%]"
             />
           </div>
-          <button onClick={handleSubmit}>add</button>
         </div>
+      </section>
+      <section className=" mt-auto border-t-[1px] border-t-border pt-[15px] flex items-center justify-end px-[10px]">
+        <ButtonComponent onClick={handleSubmit} variant={buttonVariants.FILLED_FIT}>
+          Save
+        </ButtonComponent>
       </section>
     </>
   )

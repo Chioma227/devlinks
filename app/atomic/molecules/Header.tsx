@@ -46,8 +46,12 @@ const Header = () => {
                 />
             </div>
             <div className="sm:hidden flex gap-3 items-center">
-                <DynamicIcon src="link" alt="link" className="w-[20px]" />
-                <DynamicIcon src="user" alt="user" className="w-[20px]" />
+                <ButtonComponent onClick={toggleLinkPage} variant={buttonVariants.TRANSPARENT} >
+                    <DynamicIcon src="link" alt="link" className="w-[20px]" />
+                </ButtonComponent>
+                <ButtonComponent onClick={toggleLinkPage} variant={buttonVariants.TRANSPARENT} >
+                    <DynamicIcon src="user" alt="user" className="w-[20px]" />
+                </ButtonComponent>
             </div>
             <ButtonComponent isDisabled={!links} variant={buttonVariants.OUTLINE_FIT} className="md:block hidden">
                 <Link href="/preview"> Preview</Link>

@@ -52,13 +52,18 @@ const Dashboard = () => {
         });
     };
 
-
+    
     useEffect(() => {
       const filePath = `images/${fileName}`;
       getFile(filePath)
         .then((url:string) => setImageUrl(url))
         .catch(error => console.error('Error fetching image:', error));
     }, [fileName]);
+    // useEffect(() => {
+    // localStorage.clear()
+    // });
+
+
 
     return (
         <main className="md:p-[24px] p-0 ">
