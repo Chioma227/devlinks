@@ -43,12 +43,11 @@ const Preview = () => {
     }, []);
 
     useEffect(() => {
-        console.log(userData);
-
-
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 const userId = user.uid;
+                console.log(userId);
+                
                 const getUserData = async () => {
                     const docRef = doc(db, "users", userId);
                     const docSnap = await getDoc(docRef);
@@ -84,12 +83,19 @@ const Preview = () => {
                 <ButtonComponent variant={buttonVariants.FILLED_FIT}>Share Link</ButtonComponent>
             </div>
             <section className=" sm:flex items-center justify-center sm:mt-[-15%] mt-0 sm:p-0 p-[15px]">
-                <main className="sm:w-[394px] sm:shadow-bg-shadow shadow-none sm:bg-white bg-transparent h-[569px] p-[56px] rounded-[24px]">
-                    <div>
+                <main className="sm:w-[394px] sm:shadow-bg-shadow shadow-none sm:bg-white bg-transparent h-[569px] md:p-[56px] sm:p-[30px] p-[15px] rounded-[24px]">
+                    {/* <div>
                         <Image src={userData?.imageUrl} alt="user" width={30} height={30} />
-                    </div>
+                    </div> */}
+                    <section className="flex items-center mb-[30px] justify-center flex-col space-y-[7px]">
+                        <div className="bg-grey50 h-[120px] w-[120px] rounded-full">
+
+                        </div>
+                        <div className='w-[160px] h-[16px] mb-[12px] bg-grey50 rounded-full'></div>
+                        <div className='w-[72px] h-[8px] bg-grey50 rounded-full'></div>
+                    </section>
                     <div>
-                        <p>{userData?.firstName} {userData?.lastName}</p>
+                        <p>{userData?.fName} {userData?.lName}</p>
                         <p>{userData?.email}</p>
                     </div>
                     <div className="block space-y-[20px]">

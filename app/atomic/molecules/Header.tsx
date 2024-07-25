@@ -6,12 +6,18 @@ import useToggleStore from "@/zustand/useToggle"
 import { buttonVariants } from "@/app/variants/variants"
 import DynamicIcon from "../atoms/Icon"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useLinkStore } from "@/zustand/useLinkStore"
 
 const Header = () => {
     const { links } = useLinkStore()
+    const router = useRouter()
 
     const { toggleLinkPage, isLinkPage } = useToggleStore();
+
+    const handleRoute =()=>{
+        router.push('/preview')
+    }
 
     return (
         <header className="flex items-center py-[16px] md:px-[24px] px-[20px] justify-between bg-white">
@@ -30,7 +36,6 @@ const Header = () => {
                     className={`${isLinkPage ? "bg-lightPurple text-blue100" : "text-grey"} px-[27px] py-[11px]`}
                     onClick={toggleLinkPage}
                 />
-
                 <IconButton
                     icon={{
                         src: "user",
@@ -53,8 +58,8 @@ const Header = () => {
                     <DynamicIcon src="user" alt="user" className="w-[20px]" />
                 </ButtonComponent>
             </div>
-            <ButtonComponent isDisabled={!links} variant={buttonVariants.OUTLINE_FIT} className="md:block hidden">
-                <Link href="/preview"> Preview</Link>
+            <ButtonComponent onClick={handleRoute} isDisabled={links.length === 0} variant={buttonVariants.OUTLINE_FIT} className="md:block hidden">
+                 Preview
             </ButtonComponent>
             <Link href='/preview' className="md:hidden block">
                 <DynamicIcon src="publish" alt="publish" className="w-[45px]" />

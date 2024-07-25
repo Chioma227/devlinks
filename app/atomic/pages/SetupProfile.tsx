@@ -49,6 +49,9 @@ const SetupProfile = () => {
       console.error('Please select an image');
       return;
     }
+    if(!inputValues.fName || !inputValues.lName){
+      return
+    }
     // user unique id
     const userId = v4();
 
@@ -58,14 +61,16 @@ const SetupProfile = () => {
     await uploadTask;
     const downloadURL = await getDownloadURL(storageRef);
 
-    // send user data to firestore
-    await addDoc(collection(db, 'users'), {
+    const docData ={
       userId,
-      firstName: inputValues.fName,
-      lastName: inputValues.lName,
+      fName: inputValues.fName,
+      lName: inputValues.lName,
       email: inputValues.email,
       imageUrl: downloadURL,
-    });
+    }    
+
+    // send user data to firestore
+    await addDoc(collection(db, 'users'), docData);
 
     const data = {
       name: `${inputValues.fName} ${inputValues.lName}`,
@@ -149,7 +154,7 @@ const SetupProfile = () => {
         </div>
       </section>
       <section className=" mt-auto border-t-[1px] border-t-border pt-[15px] flex items-center justify-end px-[10px]">
-        <ButtonComponent onClick={handleSubmit} variant={buttonVariants.FILLED_FIT}>
+        <ButtonComponent  onClick={handleSubmit} variant={buttonVariants.FILLED_FIT}>
           Save
         </ButtonComponent>
       </section>
