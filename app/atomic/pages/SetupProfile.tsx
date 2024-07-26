@@ -9,6 +9,7 @@ import { db, storage } from "@/firebase/firebaseConfig";
 import { addDoc, collection } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import ButtonComponent from "../atoms/Button";
+import useAuthStore from "@/zustand/useAuthStore";
 
 
 const SetupProfile = () => {
@@ -20,6 +21,7 @@ const SetupProfile = () => {
   })
   const [imageUrl, setImageUrl] = useState<string>('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const {user} = useAuthStore()
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -53,7 +55,7 @@ const SetupProfile = () => {
       return
     }
     // user unique id
-    const userId = v4();
+    const userId = user?.uid
 
     // upload image
     const storageRef = ref(storage, `images/${userId}/${selectedFile.name}`);

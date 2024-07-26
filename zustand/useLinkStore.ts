@@ -4,10 +4,13 @@ import {
   deleteDoc,
   getDocs,
   doc,
+  setDoc,
 } from "firebase/firestore";
 import { create } from "zustand";
-import { db } from "@/firebase/firebaseConfig";
+import { auth, db } from "@/firebase/firebaseConfig";
 import { persist } from "zustand/middleware";
+import useAuthStore from "./useAuthStore";
+import { getAuth } from "firebase/auth";
 
 interface Link {
   id?: string;
@@ -37,6 +40,7 @@ interface LinkState {
   handleInputChange: (index: number, field: string, value: string) => void;
 }
 
+
 export const useLinkStore = create<LinkState>()(
   persist(
     (set, get) => ({
@@ -60,6 +64,7 @@ export const useLinkStore = create<LinkState>()(
 
       //fetch links
       fetchLinks: async () => {
+      
         const linksCollection = collection(db, "links");
         const linksSnapshot = await getDocs(linksCollection);
         const linksList = linksSnapshot.docs.map((doc) => ({
@@ -74,8 +79,11 @@ export const useLinkStore = create<LinkState>()(
       handleSubmit: async (index, data) => {
           try {
             set({isLoading: true})
+            const user = getAuth().currentUser;
+            const userId = user?.uid ?? '';
+            const docRef = doc(db, 'links', userId);
+            await setDoc(docRef, data);
             const state = get();
-            const docRef = await addDoc(collection(db, 'links'), data);
 
             const newLinkInputs = [...state.linkInputs];
             newLinkInputs[index] = { ...data, id: docRef.id };
