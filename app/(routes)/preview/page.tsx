@@ -36,10 +36,24 @@ const Preview = () => {
         return () => unsubscribe();
     }, []);
 
+    const auth = getAuth();
+
+    let currentUserId: string;
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUserId = user.uid;
+            console.log(currentUserId);
+            
+        } else {
+            currentUserId = '';
+        }
+    });
+
 
     //get links
     useEffect(() => {
-        const unsubscribe = onSnapshot(collection(db, 'links'), (querySnapshot) => {
+        const unsubscribe = onSnapshot(collection(db, 'links', currentUserId), (querySnapshot) => {
             const retrievedLinks = querySnapshot.docs.map((doc) => ({
                 id: Number(doc.id),
                 ...doc.data(),
@@ -79,7 +93,7 @@ const Preview = () => {
                 <ButtonComponent variant={buttonVariants.FILLED_FIT}>Share Link</ButtonComponent>
             </div>
             <section className=" sm:flex items-center justify-center sm:mt-[-15%] mt-0 sm:p-0 p-[15px]">
-                <main className="sm:w-[394px] sm:shadow-bg-shadow shadow-none sm:bg-white bg-transparent h-[569px] md:p-[56px] sm:p-[30px] p-[15px] rounded-[24px]">
+                <main className="sm:w-[394px] sm:shadow-bg-shadow shadow-none sm:bg-white bg-transparent h-fit md:p-[56px] sm:p-[30px] p-[15px] rounded-[24px]">
                     <section className="flex items-center mb-[30px] justify-center flex-col space-y-[7px]">
                         {userDetail?.imageUrl ?
                             <div className="h-[120px] w-[120px] rounded-full border-[4px] border-blue100">
