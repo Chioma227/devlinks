@@ -64,7 +64,7 @@ const AddLinks = () => {
                 <p className='text-grey text-[15px]'>Add/edit/remove links below and then share all your profiles with the world</p>
             </header>
             <section>
-                <ButtonComponent isDisabled={links.length === 5} onClick={addLinkInput} variant={buttonVariants.OUTLINE_FULL} className="mb-[24px]">
+                <ButtonComponent  onClick={addLinkInput} variant={buttonVariants.OUTLINE_FULL} className="mb-[24px]">
                     + Add newLink
                 </ButtonComponent>
             </section>

@@ -43,13 +43,11 @@ const Preview = () => {
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUserId = user.uid;
-            console.log(currentUserId);
             
         } else {
             currentUserId = '';
         }
     });
-
 
     //get links
     useEffect(() => {
