@@ -1,16 +1,19 @@
 "use client"
-import { v4 } from "uuid";
 import Image from "next/image";
-import { useState } from "react";
+import {  useState } from "react";
 import DynamicIcon from "../atoms/Icon";
 import InputField from "../atoms/Input";
 import { buttonVariants, inputVariant } from "@/app/variants/variants";
-import { db, storage } from "@/firebase/firebaseConfig";
-import { addDoc, collection } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import ButtonComponent from "../atoms/Button";
-import useAuthStore from "@/zustand/useAuthStore";
+import { getUserDetails, handleImageUpload } from "@/zustand/useUserProfile";
 
+
+interface UserDetails {
+  fName: string;
+  lName: string;
+  email: string;
+  imageUrl: string;
+}
 
 const SetupProfile = () => {
   const { DEFAULT } = inputVariant
@@ -21,7 +24,7 @@ const SetupProfile = () => {
   })
   const [imageUrl, setImageUrl] = useState<string>('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const {user} = useAuthStore()
+  const [userDetails, setUserDetails] = useState<UserDetails | null>()
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -45,47 +48,21 @@ const SetupProfile = () => {
   };
 
 
-
   const handleSubmit = async () => {
-    if (!selectedFile) {
+     if (!selectedFile) {
       console.error('Please select an image');
       return;
     }
     if(!inputValues.fName || !inputValues.lName){
       return
     }
-    // user unique id
-    const userId = user?.uid
-
-    // upload image
-    const storageRef = ref(storage, `images/${userId}/${selectedFile.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, selectedFile);
-    await uploadTask;
-    const downloadURL = await getDownloadURL(storageRef);
-
-    const docData ={
-      userId,
-      fName: inputValues.fName,
-      lName: inputValues.lName,
-      email: inputValues.email,
-      imageUrl: downloadURL,
-    }    
-
-    // send user data to firestore
-    await addDoc(collection(db, 'users'), docData);
-
-    const data = {
-      name: `${inputValues.fName} ${inputValues.lName}`,
-      email: inputValues.email,
-      imageUrl: downloadURL,
-    };
-    localStorage.setItem('userData', JSON.stringify(data));
-
-    setInputValues({ fName: '', lName: '', email: '' });
-    setSelectedFile(null);
-    setImageUrl('');
-
-    console.log('Data submitted successfully!');
+    if (selectedFile) {
+      await handleImageUpload(selectedFile, inputValues.fName, inputValues.lName, inputValues.email);
+      const data = await getUserDetails();
+      setUserDetails(data as UserDetails);
+      console.log(userDetails);
+      
+    }
   };
 
   return (

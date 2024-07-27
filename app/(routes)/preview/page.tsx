@@ -2,25 +2,31 @@
 import ButtonComponent from "@/app/atomic/atoms/Button";
 import DynamicIcon from "@/app/atomic/atoms/Icon"
 import { buttonVariants } from "@/app/variants/variants";
-import { auth, db } from "@/firebase/firebaseConfig";
-import { useLinkStore } from "@/zustand/useLinkStore"
+import {  db } from "@/firebase/firebaseConfig";
+import { getUserDetails } from "@/zustand/useUserProfile";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
-import Image from "next/image";
+import {  doc, getDoc } from "firebase/firestore";
 import Link from "next/link"
 import { AwaitedReactNode, JSXElementConstructor, Key, ReactElement, ReactNode, useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
 import { UrlObject } from "url";
 
+
+interface UserDetails {
+    fName: string;
+    lName: string;
+    email: string;
+    imageUrl: string;
+  }
+
+
 const Preview = () => {
     //states
-    const [user, setUser] = useState<any>([]);
     const [links, setLinks] = useState<any>([]);
-    const [userData, setUserData] = useState<any>();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     //destructure user array
-    const [userDetail, setUserDetail] = user
+    const [userDetail, setUserDetail] = useState<UserDetails | null>()
 
 
     //check for user authentication
@@ -36,42 +42,42 @@ const Preview = () => {
         return () => unsubscribe();
     }, []);
 
-    const auth = getAuth();
-
-    let currentUserId: string;
-
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            currentUserId = user.uid;
-            
-        } else {
-            currentUserId = '';
-        }
-    });
-
     //get links
     useEffect(() => {
-        const unsubscribe = onSnapshot(collection(db, 'links', currentUserId), (querySnapshot) => {
-            const retrievedLinks = querySnapshot.docs.map((doc) => ({
-                id: Number(doc.id),
-                ...doc.data(),
-            }));
-            setLinks(retrievedLinks);
+        const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
+            if (user) {
+                const userId = user.uid;
+                const fetchUserLinks = async () => {
+                    const docRef = doc(db, 'users', userId);
+                    const docSnapshot = await getDoc(docRef);
+                    if (docSnapshot.exists()) {
+                        const docData = docSnapshot.data();
+                        const retrievedLinks = docData.links || [];
+                        setLinks(retrievedLinks);
+                    } else {
+                        setLinks([]);
+                    }
+                };
+                fetchUserLinks();
+            } else {
+                setLinks([]);
+            }
         });
-        return unsubscribe;
-    }, []);
+        return () => unsubscribe();
+    }, [setLinks]);
 
     //get user data
     useEffect(() => {
-        const unsubscribe = onSnapshot(collection(db, 'users'), (querySnapshot) => {
-            const retrievedData = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            setUser(retrievedData);
-        });
-        return unsubscribe;
-    }, []);
+        const fetchData = async () => {
+          const data = await getUserDetails();
+          if (data) {
+            setUserDetail(data as UserDetails);
+            console.log(userDetail);
+          }
+        };
+    
+        fetchData();
+      }, []);
 
     return (
         <main>
